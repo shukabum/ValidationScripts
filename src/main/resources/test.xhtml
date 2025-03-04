@@ -1,18 +1,164 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <title>XHTML Test Page</title>
-    <script type="text/javascript">
-      <![CDATA[
-          function showMessage() {
-              alert("Hello from JavaScript inside XHTML!");
-          }
-      ]]>
-    </script>
-  </head>
-  <body>
-    <h1>Welcome to XHTML Execution</h2>
-    <button id="testButton" onclick="showMessage()">Click Me</button>
-  </body>
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:cm="http://java.sun.com/jsf/composite/comps">
+<f:view>
+
+<h:head>
+	<!-- 2015/10/27 障害番号IE11-060 パスワードのマスク表示を解除するボタンをなくす修正 add start -->
+	<f:facet name="first">
+	  <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+	</f:facet>
+	<!-- 2015/10/27 障害番号IE11-060 パスワードのマスク表示を解除するボタンをなくす修正 add end -->
+	<f:loadBundle basename="jp.co.itfor.tcs.properties.label" var="label" />
+	<title>#{label['window.title.welcome']}</title>
+
+	<h:outputStylesheet library="css" name="Authentication/pageLogin.css" />
+	<h:outputScript library="script" name="jquery-plugins.js" />
+	<h:outputScript library="script" name="common.js" />
+	<h:outputScript library="script" name="init.js" />
+	<h:outputScript library="script" name="commonValidator.js" />
+	<h:outputScript library="script" name="Authentication/pageLogin.js" />
+</h:head>
+	<!-- 2015/05/12 障害番号IAXXXBUG-725 画面が崩れる問題回避対応 mod start -->
+	<ui:remove>
+	<!-- <h:body id="page_Login" onLoad="launchPopUp();"> -->
+	</ui:remove>
+	<h:body id="page_Login" onload="initStationLinkWindow();">
+	<!-- 2015/05/12 障害番号IAXXXBUG-725 画面が崩れる問題回避対応 mod end -->
+		<ui:insert>
+			<ui:include src="/pages/Common/pageLoading.xhtml" />
+			<ui:include src="/pages/Common/pageMessages.xhtml" />
+ 		</ui:insert>
+        <h:form id="loginForm">
+            <div class="tcsTitle">
+            	<!-- 2015/11/05 障害番号IE11-327 画像のドッラグ可能対応 mod start -->
+            	<ui:remove>
+				<!-- <h:graphicImage url="/resources/images/cremaxLogo.png" title="#{label['common.label.cremax']}" styleClass="graphicImage" /> -->
+				</ui:remove>
+                <h:graphicImage url="/resources/images/cremaxLogo.png" title="#{label['common.label.cremax']}" styleClass="graphicImage" id="loginLogoImg" />
+                <!-- 2015/11/05 障害番号IE11-327 画像のドッラグ可能対応 mod end -->
+            </div> <!-- tcsTitle -->
+            <div class="loginForm">
+            </div> <!-- loginForm -->
+            <div class="loginFormIn">
+                <table>
+                    <tr>
+                        <td>
+                            <h:outputText value="#{label['common.label.userId']}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h:inputText id="userId"
+                            			 value="#{aUMNLogin.loginDto.userId}"
+                            			 title="#{label['common.label.userId']}"
+                            			 styleClass="inputText halfValue required imeModeDisabled"
+                            			 maxlength="10"
+                            			 tabindex="1"
+                            			 size="20" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h:outputText value="#{label['common.label.password']}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <ui:remove>
+                        	<!-- 2015/02/23 IAXXXBUG-293 パスワードに必須チェックを設定 mod start -->
+                        	</ui:remove>
+                        	<ui:remove>
+                            <!-- <h:inputSecret id="password"
+                            			   value="#{aUMNLogin.loginDto.password}"
+                            			   title="#{label['common.label.password']}"
+                            			   styleClass="secretText halfValue"
+                            			   maxlength="30"
+                            			   tabindex="2"
+                            			   size="20" /> -->
+                            </ui:remove>
+                            <h:inputSecret id="password"
+                            			   value="#{aUMNLogin.loginDto.password}"
+                            			   title="#{label['common.label.password']}"
+                            			   styleClass="secretText halfValue required"
+                            			   maxlength="30"
+                            			   tabindex="2"
+                            			   size="20" />
+                            <ui:remove>
+                            <!-- 2015/02/23 IAXXXBUG-293 パスワードに必須チェックを設定 mod end -->
+                            </ui:remove>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="loginFormButton">
+<!-- 2015/02/20 障害番号IAXXXBUG-226 サーバー処理中のlodingDiv対応 mod start -->
+				<ui:remove><!--
+                <p:commandButton
+                	id="btnValidateLogin"
+                    action="#{aUMNLogin.validateLogin}"
+                    value="#{label['common.button.login']}(L)"
+                    alt="#{label['common.button.login']}"
+                    styleClass="commandButton"
+                    onstart="showLoadingDiv();"
+                    onerror="hideLoadingDiv();"
+                    oncomplete="hideLoadingDiv();resultValidateLogin(args)"
+                    accesskey="L|l"
+                    tabindex="3" />
+                <p:remoteCommand
+                	name="pg010101000BtnLoginCmd"
+                	onstart="showLoadingDiv();"
+                    onerror="hideLoadingDiv();"
+                    oncomplete="hideLoadingDiv();"
+                    action="#{aUMNLogin.login}"/>
+				--></ui:remove>
+				<!-- 2020/12/11 IWシステムリプレイス mod start-->
+                <p:commandButton
+                	id="btnValidateLogin"
+                    action="#{aUMNLogin.validateLogin}"
+                    value="#{label['common.button.login']}(L)"
+                    alt="#{label['common.button.login']}"
+                    styleClass="commandButton"
+                    onstart="showLoadingDiv();if(win){if(win.closed){isCtiClosedSetTrue();}}"
+                    onerror="hideLoadingDiv();"
+                    oncomplete="resultValidateLogin(args)"
+                    accesskey="L|l"
+                    tabindex="3" />
+                <!-- 2020/12/11 IWシステムリプレイス mod end-->
+                <p:remoteCommand
+                	name="pg010101000BtnLoginCmd"
+                    onerror="hideLoadingDiv();"
+                    oncomplete="hideLoadingDiv();"
+                    action="#{aUMNLogin.login}"/>
+<!-- 2015/02/20 障害番号IAXXXBUG-226 サーバー処理中のlodingDiv対応 mod end -->
+                <br />
+                <br />
+                <p:commandButton
+                	id="btnEnd"
+                	value="#{label['common.button.exit']}(X)"
+                	alt="#{label['common.button.exit']}"
+                	styleClass="commandButton"
+                	accesskey="X|x"
+                	tabindex="4"
+                	onclick="(window.open('','_self').opener=window).close();" />
+                	
+                <!-- 2020/12/11 IWシステムリプレイス add start-->
+                <p:remoteCommand name="isCtiClosedSetTrue" action="#{aUMNLogin.setIsCtiClosed(true)}"/>
+                <!-- 2020/12/11 IWシステムリプレイス add end-->
+
+            
+        </h:form>
+        <!-- 2014/11/05 障害番号G0056 コンテキスト取得処理 add start -->
+        <ui:insert>
+			<ui:include src="/pages/Common/userResources.xhtml" />
+		</ui:insert>
+		<!-- 2014/11/05 障害番号G0056 コンテキスト取得処理 add end -->
+     </h:body>
+</f:view>
 </html>

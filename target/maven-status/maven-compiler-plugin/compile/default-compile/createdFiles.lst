@@ -1,1 +1,2 @@
 com\validator\XHTMLValidator.class
+com\validator\XHTMLValidator$ValidationErrorHandler.class
